@@ -1,4 +1,7 @@
 # Split the dataset by class values, returns a dictionary
+from math import sqrt
+
+
 def separate_by_class(dataset):
     separated = dict()
     for i in range(len(dataset)):
@@ -8,6 +11,29 @@ def separate_by_class(dataset):
             separated[class_value] = list()
         separated[class_value].append(vector)
     return separated
+
+# Calculate the mean of a list of numbers
+
+
+def mean(numbers):
+    return sum(numbers)/float(len(numbers))
+
+
+# Calculate the standard deviation of a list of numbers
+
+def stdev(numbers):
+    avg = mean(numbers)
+    variance = sum([(x-avg)**2 for x in numbers]) / float(len(numbers)-1)
+    return sqrt(variance)
+
+# Calculate the mean, stdev and count for each column in a dataset
+
+
+def summarize_dataset(dataset):
+    summaries = [(mean(column), stdev(column), len(column))
+                 for column in zip(*dataset)]
+    del(summaries[-1])
+    return summaries
 
 
 dataset = [[3.393533211, 2.331273381, 0],
