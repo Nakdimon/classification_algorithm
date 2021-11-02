@@ -46,8 +46,6 @@ dataset = [[3.393533211, 2.331273381, 0],
            [9.172168622, 2.511101045, 1],
            [7.792783481, 3.424088941, 1],
            [7.939820817, 0.791637231, 1]]
-separated = separate_by_class(dataset)
-for label in separated:
-    print(label)
-    for row in separated[label]:
-        print(row)
+
+summary = summarize_dataset(dataset)
+print(summary)
