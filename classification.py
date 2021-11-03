@@ -1,6 +1,5 @@
 # Split the dataset by class values, returns a dictionary
 from csv import reader
-from random import seed
 from random import randrange
 from math import sqrt
 from math import pi
@@ -39,8 +38,6 @@ def str_column_to_int(dataset, column):
         row[column] = lookup[row[column]]
     return lookup
 
-# Split a dataset into k folds
-
 
 def cross_validation_split(dataset, n_folds):
     dataset_split = list()
@@ -70,10 +67,14 @@ def accuracy_metric(actual, predicted):
 def evaluate_algorithm(dataset, algorithm, n_folds, *args):
     folds = cross_validation_split(dataset, n_folds)
     scores = list()
+    # for row in test_set:
+    #     row[-1] = None
+    # print(test_set)
     for fold in folds:
         train_set = list(folds)
         train_set.remove(fold)
         train_set = sum(train_set, [])
+        # print(test_set)
         test_set = list()
         for row in fold:
             row_copy = list(row)
@@ -83,7 +84,10 @@ def evaluate_algorithm(dataset, algorithm, n_folds, *args):
         actual = [row[-1] for row in fold]
         accuracy = accuracy_metric(actual, predicted)
         scores.append(accuracy)
+    print(actual)
     return scores
+
+# Split the dataset by class values, returns a dictionary
 
 
 def separate_by_class(dataset):
@@ -102,8 +106,8 @@ def separate_by_class(dataset):
 def mean(numbers):
     return sum(numbers)/float(len(numbers))
 
-
 # Calculate the standard deviation of a list of numbers
+
 
 def stdev(numbers):
     avg = mean(numbers)
@@ -145,7 +149,7 @@ def calculate_class_probabilities(summaries, row):
         probabilities[class_value] = summaries[class_value][0][2] / \
             float(total_rows)
         for i in range(len(class_summaries)):
-            mean, stdev, count = class_summaries[i]
+            mean, stdev, _ = class_summaries[i]
             probabilities[class_value] *= calculate_probability(
                 row[i], mean, stdev)
     return probabilities
@@ -174,8 +178,7 @@ def naive_bayes(train, test):
     return(predictions)
 
 
-# Test Naive Bayes on Iris Dataset
-seed(1)
+# loading training Iris Dataset
 filename = './dataSets/training data for classification.csv'
 dataset = load_csv(filename)
 dataset.pop(0)
@@ -183,8 +186,29 @@ for i in range(len(dataset[0])-1):
     str_column_to_float(dataset, i)
 # convert class column to integers
 str_column_to_int(dataset, len(dataset[0])-1)
-# evaluate algorithm
-n_folds = 5
-scores = evaluate_algorithm(dataset, naive_bayes, n_folds)
-print('Scores: %s' % scores)
-print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
+
+# loading data to classify
+filename = './dataSets/testing data for classification.csv'
+testing_dataset = load_csv(filename)
+testing_dataset.pop(0)
+for i in range(len(testing_dataset[0])-1):
+    str_column_to_float(testing_dataset, i)
+# convert class column to integers
+str_column_to_int(testing_dataset, len(testing_dataset[0])-1)
+# fit model
+for row in testing_dataset:
+    row.pop(-1)
+model = summarize_by_class(dataset)
+labels = list()
+
+for row in testing_dataset:
+    labels.append(predict(model, row))
+
+for i, prediction in enumerate(labels, start=0):
+
+    print('Data=%s, Predicted: %s' % (testing_dataset[i], prediction))
+
+# n_folds = 5
+# scores = evaluate_algorithm(dataset, naive_bayes, n_folds)
+# print('Scores: %s' % scores)
+# print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))

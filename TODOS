@@ -1,0 +1,2 @@
+- Print test_set when being created from folds compare with test set being from test data.
+- Obtain classification results from real test set.
